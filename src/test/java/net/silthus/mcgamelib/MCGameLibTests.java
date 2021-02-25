@@ -20,17 +20,8 @@ public class MCGameLibTests {
     @Before
     public void setUp() {
         server = MockBukkit.mock();
-        MockBukkit.loadWith(MCGameLib.class, new File("build/tmp/spigotPluginYaml/plugin.yml"));
+        MockBukkit.load(MCGameLib.class);
     }
-
-    @Test
-    public void shouldFirePlayerJoinEvent() {
-
-        server.addPlayer();
-
-        server.getPluginManager().assertEventFired(PlayerJoinEvent.class);
-    }
-
     @After
     public void tearDown() {
         MockBukkit.unmock();
