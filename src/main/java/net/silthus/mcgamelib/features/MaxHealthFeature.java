@@ -1,12 +1,11 @@
 package net.silthus.mcgamelib.features;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.configmapper.ConfigOption;
 import net.silthus.mcgamelib.AbstractFeature;
-import net.silthus.mcgamelib.Phase;
+import net.silthus.mcgamelib.GameSession;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -15,8 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @Accessors(fluent = true)
 @EqualsAndHashCode(callSuper = true)
 public class MaxHealthFeature extends AbstractFeature {
@@ -29,8 +27,8 @@ public class MaxHealthFeature extends AbstractFeature {
 
     private final Map<UUID, Double> healthMap = new HashMap<>();
 
-    public MaxHealthFeature(Phase phase) {
-        super(phase);
+    public MaxHealthFeature(GameSession session) {
+        super(session);
     }
 
     @Override

@@ -52,12 +52,13 @@ repositories {
     jcenter()
     spigot()
     maven { url = 'https://jitpack.io' }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
 }
 
 dependencies {
     implementation spigot(mcVersion)
 
-    //Add dependencies here
+    // add dependencies here
     implementation 'co.aikar:acf-paper:0.5.0-SNAPSHOT'
     api group: 'net.silthus.config-mapper', name: 'bukkit', version: '1.1.4'
 

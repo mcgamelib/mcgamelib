@@ -2,27 +2,20 @@ package net.silthus.mcgamelib;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
-import java.io.File;
-
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-
-@RunWith(MockitoJUnitRunner.class)
 public class MCGameLibTests {
 
     private ServerMock server;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         server = MockBukkit.mock();
         MockBukkit.load(MCGameLib.class);
     }
-    @After
+
+    @AfterEach
     public void tearDown() {
         MockBukkit.unmock();
     }

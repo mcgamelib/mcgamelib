@@ -1,25 +1,8 @@
 package net.silthus.mcgamelib;
 
-import org.bukkit.entity.Player;
+public interface Feature extends GameObject {
 
-import java.util.Collection;
-
-public interface Feature {
-
-    Phase phase();
-
-    default GameSession session() {
-        return phase().session();
-    }
-
-    default Game game() {
-        return session().game();
-    }
-
-    default Collection<Player> players() {
-
-        return session().players();
-    }
+    default void load() {}
 
     void enable();
 

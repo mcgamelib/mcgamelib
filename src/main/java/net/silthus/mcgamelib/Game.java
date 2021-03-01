@@ -18,6 +18,11 @@ public interface Game {
     UUID id();
 
     /**
+     * @return the game manager that creates this game
+     */
+    GameManager gameManager();
+
+    /**
      * Gets all active sessions of this game instance.
      * <p>Use the {@link #allSessions()} method to get all sessions
      * including sessions that already ended.
@@ -33,7 +38,7 @@ public interface Game {
 
     /**
      * Starts a new {@link GameSession} for this game.
-     * <p>Starting a game will load the {@link Map} and enable the first {@link Phase}.
+     * <p>Starting a game will load the map and enable the first {@link Phase}.
      * <p>A game can be started as often as needed but care should be taken to fill existing
      * {@link #sessions()} before starting another game.
      *
