@@ -1,6 +1,7 @@
 package net.silthus.mcgamelib;
 
 import kr.entree.spigradle.annotations.PluginMain;
+import net.silthus.configmapper.bukkit.BukkitConfigMap;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -21,4 +22,8 @@ public class MCGameLib extends JavaPlugin implements Listener {
         super(loader, description, dataFolder, file);
     }
 
+    @Override
+    public void onEnable() {
+
+    }
 }
