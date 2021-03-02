@@ -101,6 +101,13 @@ test {
     ignoreFailures = false
 }
 
+tasks.withType(Javadoc) {
+    failOnError false
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
+
 processResources {
     project.properties.put("version", this.version)
     expand project.properties

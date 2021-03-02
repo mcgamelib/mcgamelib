@@ -4,7 +4,6 @@ import net.silthus.mcgamelib.GameMode;
 import net.silthus.mcgamelib.Phase;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public interface GameModeBuilder {
 

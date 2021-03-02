@@ -1,8 +1,12 @@
 package net.silthus.mcgamelib;
 
+import net.silthus.mcgamelib.events.player.JoinGameEvent;
+import net.silthus.mcgamelib.events.player.QuitGameEvent;
+import net.silthus.mcgamelib.events.player.SpectateGameEvent;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * The game object is part of a game session and can access the game
@@ -57,5 +61,89 @@ public interface GameObject {
     default Collection<Player> players() {
 
         return session().players();
+    }
+
+    /**
+     * Use the onJoin hook as an alternative to the {@link JoinGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently in the game after the
+     * {@link Phase} or {@link Feature} has been activated.
+     *
+     * @param consumer the consumer that is called when a user joined or the game object was activated
+     */
+    default void onJoin(Consumer<User> consumer) {
+
+        session().onJoin(this, consumer);
+    }
+
+    /**
+     * Use the onJoin hook as an alternative to the {@link JoinGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently in the game after the
+     * {@link Phase} or {@link Feature} has been activated.
+     * <p>The difference to the {@link #onJoin(Consumer)} hook is that
+     * this method already resolved the {@link Player} and is only called if it exists.
+     *
+     * @param consumer the consumer that is called when a player joined or the game object was activated
+     */
+    default void onPlayerJoin(Consumer<Player> consumer) {
+
+        session().onPlayerJoin(this, consumer);
+    }
+
+    /**
+     * Use the onQuit hook as an alternative to the {@link QuitGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently in the game after the
+     * {@link Phase} or {@link Feature} has been deactivated.
+     *
+     * @param consumer the consumer that is called when a user quits or the game object was activated
+     */
+    default void onQuit(Consumer<User> consumer) {
+
+        session().onQuit(this, consumer);
+    }
+
+    /**
+     * Use the onQuit hook as an alternative to the {@link QuitGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently in the game after the
+     * {@link Phase} or {@link Feature} has been deactivated.
+     * <p>The difference to the {@link #onJoin(Consumer)} hook is that
+     * this method already resolved the {@link Player} and is only called if it exists.
+     *
+     * @param consumer the consumer that is called when a player quits or the game object was activated
+     */
+    default void onPlayerQuit(Consumer<Player> consumer) {
+
+        session().onPlayerQuit(this, consumer);
+    }
+
+    /**
+     * Use the onSpectate hook as an alternative to the {@link SpectateGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently spectating the game after the
+     * {@link Phase} or {@link Feature} has been activated.
+     *
+     * @param consumer the consumer that is called when a user starts spectating or the game object was activated
+     */
+    default void onSpectate(Consumer<User> consumer) {
+
+        session().onSpectate(this, consumer);
+    }
+
+    /**
+     * Use the onSpectate hook as an alternative to the {@link SpectateGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently spectating the game after the
+     * {@link Phase} or {@link Feature} has been activated.
+     * <p>The difference to the {@link #onSpectate(Consumer)} hook is that
+     * this method already resolved the {@link Player} and is only called if it exists.
+     *
+     * @param consumer the consumer that is called when a player starts spectating or the game object was activated
+     */
+    default void onPlayerSpectate(Consumer<Player> consumer) {
+
+        session().onPlayerSpectate(this, consumer);
     }
 }

@@ -1,10 +1,14 @@
 package net.silthus.mcgamelib;
 
+import net.silthus.mcgamelib.events.player.JoinGameEvent;
+import net.silthus.mcgamelib.events.player.QuitGameEvent;
+import net.silthus.mcgamelib.events.player.SpectateGameEvent;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public interface GameSession {
@@ -112,6 +116,78 @@ public interface GameSession {
                 .flatMap(Optional::stream)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Use the onJoin hook as an alternative to the {@link JoinGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently in the game after the
+     * {@link Phase} or {@link Feature} has been activated.
+     *
+     * @param gameObject the game object that registered the listener
+     * @param consumer the consumer that is called when a user joined or the game object was activated
+     */
+    void onJoin(GameObject gameObject, Consumer<User> consumer);
+
+    /**
+     * Use the onJoin hook as an alternative to the {@link JoinGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently in the game after the
+     * {@link Phase} or {@link Feature} has been activated.
+     * <p>The difference to the {@link #onJoin(GameObject, Consumer)} hook is that
+     * this method already resolved the {@link Player} and is only called if it exists.
+     *
+     * @param gameObject the game object that registered the listener
+     * @param consumer the consumer that is called when a player joined or the game object was activated
+     */
+    void onPlayerJoin(GameObject gameObject, Consumer<Player> consumer);
+
+    /**
+     * Use the onQuit hook as an alternative to the {@link QuitGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently in the game after the
+     * {@link Phase} or {@link Feature} has been deactivated.
+     *
+     * @param gameObject the game object that registered the listener
+     * @param consumer the consumer that is called when a user quits or the game object was activated
+     */
+    void onQuit(GameObject gameObject, Consumer<User> consumer);
+
+    /**
+     * Use the onQuit hook as an alternative to the {@link QuitGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently in the game after the
+     * {@link Phase} or {@link Feature} has been deactivated.
+     * <p>The difference to the {@link #onJoin(GameObject, Consumer)} hook is that
+     * this method already resolved the {@link Player} and is only called if it exists.
+     *
+     * @param gameObject the game object that registered the listener
+     * @param consumer the consumer that is called when a player quits or the game object was activated
+     */
+    void onPlayerQuit(GameObject gameObject, Consumer<Player> consumer);
+
+    /**
+     * Use the onSpectate hook as an alternative to the {@link SpectateGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently spectating the game after the
+     * {@link Phase} or {@link Feature} has been activated.
+     *
+     * @param gameObject the game object that registered the listener
+     * @param consumer the consumer that is called when a user starts spectating or the game object was activated
+     */
+    void onSpectate(GameObject gameObject, Consumer<User> consumer);
+
+    /**
+     * Use the onSpectate hook as an alternative to the {@link SpectateGameEvent}.
+     * <p>The difference to the event is that the provided callback will
+     * also be called for every player currently spectating the game after the
+     * {@link Phase} or {@link Feature} has been activated.
+     * <p>The difference to the {@link #onSpectate(GameObject, Consumer)} hook is that
+     * this method already resolved the {@link Player} and is only called if it exists.
+     *
+     * @param gameObject the game object that registered the listener
+     * @param consumer the consumer that is called when a player starts spectating or the game object was activated
+     */
+    void onPlayerSpectate(GameObject gameObject, Consumer<Player> consumer);
 
     /**
      * The join result is returned when an user attempts to
