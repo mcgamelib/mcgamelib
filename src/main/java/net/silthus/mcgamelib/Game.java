@@ -1,6 +1,9 @@
 package net.silthus.mcgamelib;
 
+import org.bukkit.configuration.ConfigurationSection;
+
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -45,4 +48,12 @@ public interface Game {
      * @return the game session created for this game
      */
     GameSession start();
+
+    /**
+     * Gets the relevant configuration section of the feature inside the game config.
+     *
+     * @param identifier the identifier of the feature
+     * @return the config section of the feature
+     */
+    Optional<ConfigurationSection> getFeatureConfig(String identifier);
 }

@@ -13,7 +13,7 @@ import java.util.function.Function;
 @Log(topic = "MCGameLib")
 public final class FeatureRegistry {
 
-    private final Map<Class<? extends Feature>, Function<GameSession, ? extends Feature>> features = new HashMap<>();
+    private final Map<Class<? extends Feature>, FeatureFactory<? extends Feature>> features = new HashMap<>();
 
     /**
      * @return an immutable set of all registered feature types
@@ -65,7 +65,7 @@ public final class FeatureRegistry {
             throw new UnsupportedOperationException("The feature is already registered: " + featureClass.getCanonicalName());
         }
 
-        features.put(featureClass, supplier);
+        features.put(featureClass, new FeatureFactory<>(featureClass, supplier));
         log.fine("registered feature: " + featureClass.getCanonicalName());
 
         return this;
@@ -75,13 +75,13 @@ public final class FeatureRegistry {
      * Tries to find a registered feature for the given class.
      * <p>Only the exact match may return the given feature instance.
      *
-     * @param session the game session that is creating the feature
      * @param featureClass the class of the feature
      * @param <TFeature> the type of the feature
-     * @return a new instance of the feature scope to the given game session
+     * @return the factory of the feature if it exists
      */
-    public <TFeature extends Feature> Optional<TFeature> get(GameSession session, Class<TFeature> featureClass) {
+    @SuppressWarnings("unchecked")
+    public <TFeature extends Feature> Optional<FeatureFactory<TFeature>> get(Class<TFeature> featureClass) {
 
-        return Optional.ofNullable(featureClass.cast(features.get(featureClass).apply(session)));
+        return Optional.ofNullable((FeatureFactory<TFeature>) features.get(featureClass));
     }
 }

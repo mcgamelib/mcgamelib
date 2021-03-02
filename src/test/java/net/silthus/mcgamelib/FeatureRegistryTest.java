@@ -25,10 +25,10 @@ class FeatureRegistryTest {
 
         registry.register(MaxHealthFeature.class);
 
-        assertThat(registry.get(mock(GameSession.class), MaxHealthFeature.class))
+        assertThat(registry.get(MaxHealthFeature.class))
                 .isPresent()
                 .get()
-                .isInstanceOf(MaxHealthFeature.class)
+                .extracting(factory -> factory.create(mock(GameSession.class)))
                 .extracting(MaxHealthFeature::maxHealth)
                 .isEqualTo(20d);
     }
@@ -39,10 +39,10 @@ class FeatureRegistryTest {
 
         registry.register(MaxHealthFeature.class, session -> new MaxHealthFeature(session).maxHealth(30));
 
-        assertThat(registry.get(mock(GameSession.class), MaxHealthFeature.class))
+        assertThat(registry.get(MaxHealthFeature.class))
                 .isPresent()
                 .get()
-                .isInstanceOf(MaxHealthFeature.class)
+                .extracting(factory -> factory.create(mock(GameSession.class)))
                 .extracting(MaxHealthFeature::maxHealth)
                 .isEqualTo(30d);
     }
@@ -75,7 +75,7 @@ class FeatureRegistryTest {
         registry.register(InvalidFeature.class);
 
         assertThatExceptionOfType(Exception.class)
-                .isThrownBy(() -> registry.get(mock(GameSession.class), InvalidFeature.class));
+                .isThrownBy(() -> registry.get(InvalidFeature.class));
         assertThat(registry.allTypes()).isEmpty();
     }
 

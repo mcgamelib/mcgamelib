@@ -46,10 +46,8 @@ public abstract class AbstractPhase extends AbstractGameObject implements Phase 
     @Override
     public <TFeature extends Feature> Phase addFeature(Class<TFeature> feature, Consumer<TFeature> config) {
 
-        gameManager().features().get(session(), feature).ifPresent(tFeature -> {
-            config.accept(tFeature);
-            features.put(feature, tFeature);
-        });
+        gameManager().features().get(feature)
+                .ifPresent(factory -> features.put(feature, factory.create(session())));
 
         return this;
     }
@@ -57,6 +55,9 @@ public abstract class AbstractPhase extends AbstractGameObject implements Phase 
     @Override
     public void start() {
 
+        for (Feature feature : features.values()) {
+            feature.enable();
+        }
     }
 
     @Override
