@@ -36,8 +36,8 @@ public interface GameSession {
     /**
      * @return true if the game session is running
      */
-    default boolean running() {
-        return state() == GameState.RUNNING;
+    default boolean active() {
+        return state() == GameState.ACTIVE;
     }
 
     /**

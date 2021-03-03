@@ -6,16 +6,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface Phase extends GameObject {
-
-    /**
-     * Each phase has a unique id that is generated when a new game session is created
-     *
-     * @return the unique id of this phase
-     */
-    UUID id();
 
     /**
      * @return the name of the phase used in config paths and for reference

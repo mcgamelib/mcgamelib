@@ -8,6 +8,6 @@ public enum GameState {
 
     NOT_STARTED,
     LOADING,
-    RUNNING,
+    ACTIVE,
     ENDED
 }

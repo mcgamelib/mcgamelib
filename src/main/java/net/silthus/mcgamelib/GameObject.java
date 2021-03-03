@@ -6,6 +6,7 @@ import net.silthus.mcgamelib.events.player.SpectateGameEvent;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -14,6 +15,11 @@ import java.util.function.Consumer;
  * <p>Examples for game objects are {@link Phase}s and {@link Feature}s.
  */
 public interface GameObject {
+
+    /**
+     * @return the unique identifier of this game object
+     */
+    UUID id();
 
     /**
      * @return the game session that this phase belongs to

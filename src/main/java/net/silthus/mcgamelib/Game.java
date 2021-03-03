@@ -52,5 +52,5 @@ public interface Game {
      *
      * @return the game session created for this game
      */
-    GameSession start();
+    GameSession startNewGameSession();
 }
