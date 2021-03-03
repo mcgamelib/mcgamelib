@@ -1,7 +1,10 @@
 package net.silthus.mcgamelib;
 
 import com.google.common.base.Strings;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.configmapper.ConfigOption;
@@ -30,7 +33,7 @@ public abstract class AbstractPhase extends AbstractGameObject implements Phase 
             "The time format must start with a P and then be followed by a duration of D H M S.",
             "For example: P5d4h3m2s.001 is parsed as a duration of 5 days 4 hours 3 minutes 2.001 seconds"
     })
-    private String duration = null;
+    private final String duration = null;
     private Duration configuredDuration = Duration.ZERO;
     private Instant startTime;
     private Instant endTime;

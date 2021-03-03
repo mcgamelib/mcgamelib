@@ -6,7 +6,6 @@ import net.silthus.configmapper.ConfigMap;
 import net.silthus.configmapper.ConfigurationException;
 import net.silthus.configmapper.bukkit.BukkitConfigMap;
 import net.silthus.mcgamelib.annotations.FeatureInfo;
-import org.bukkit.configuration.MemoryConfiguration;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;

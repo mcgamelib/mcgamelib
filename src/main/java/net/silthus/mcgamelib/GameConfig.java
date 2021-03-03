@@ -18,6 +18,23 @@ public final class GameConfig {
     }
 
     /**
+     * Gets the configuration section that configures the given phase.
+     * <p>An empty configuration section will be returned if no section is present.
+     *
+     * @param phase the phase to get a config for
+     * @return the configuration section of the phase
+     */
+    public ConfigurationSection getPhaseConfig(@NonNull Phase phase) {
+
+        ConfigurationSection phases = config.getConfigurationSection("phases");
+        if (phases == null) phases = config.createSection("phases");
+        ConfigurationSection phaseSection = phases.getConfigurationSection(phase.name());
+        if (phaseSection == null) phaseSection = phases.createSection(phase.name());
+
+        return phaseSection;
+    }
+
+    /**
      * Gets the relevant configuration section of the feature inside the game config.
      *
      * @param phase the phase of the feature.
@@ -31,11 +48,7 @@ public final class GameConfig {
         if (phase == null) {
             section = config;
         } else {
-            ConfigurationSection phases = config.getConfigurationSection("phases");
-            if (phases == null) phases = config.createSection("phases");
-            ConfigurationSection phaseSection = phases.getConfigurationSection(phase.name());
-            if (phaseSection == null) phaseSection = phases.createSection(phase.name());
-            section = phaseSection;
+            section = getPhaseConfig(phase);
         }
 
         ConfigurationSection features = section.getConfigurationSection("features");

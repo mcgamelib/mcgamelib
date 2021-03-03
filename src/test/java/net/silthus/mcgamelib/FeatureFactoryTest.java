@@ -1,7 +1,6 @@
 package net.silthus.mcgamelib;
 
 import net.silthus.mcgamelib.features.MaxHealthFeature;
-import net.silthus.mcgamelib.modes.TestPhase;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

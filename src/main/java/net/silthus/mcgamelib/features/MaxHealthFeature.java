@@ -1,6 +1,9 @@
 package net.silthus.mcgamelib.features;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.silthus.configmapper.ConfigOption;
 import net.silthus.mcgamelib.AbstractFeature;
@@ -27,7 +30,7 @@ public class MaxHealthFeature extends AbstractFeature {
 
     @ConfigOption(
             required = true,
-            description = "The maximum health that is set when this feature is activated."
+            description = "The maximum health that is set to all players."
     )
     private double maxHealth = 20d;
 

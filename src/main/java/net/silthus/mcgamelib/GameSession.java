@@ -11,6 +11,11 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * A game session is created from a game and keeps track of the current game progress.
+ * <p>Multiple game sessions may be created per {@link Game} and each get their own
+ * instances of the configured {@link Phase}s and {@link Feature}s.
+ */
 public interface GameSession {
 
     /**
@@ -213,9 +218,9 @@ public interface GameSession {
          */
         NOT_STARTED,
         /**
-         * The map is loading and the game cannot be joined at this moment.
+         * The game session is loading and the game cannot be joined at this moment.
          */
-        MAP_LOADING;
+        LOADING;
 
         /**
          * @return true if the join was successful

@@ -1,7 +1,10 @@
 package net.silthus.mcgamelib.event;
 
 import lombok.NonNull;
-import net.silthus.mcgamelib.*;
+import net.silthus.mcgamelib.GameSession;
+import net.silthus.mcgamelib.MCGameLib;
+import net.silthus.mcgamelib.User;
+import net.silthus.mcgamelib.UserHandler;
 import net.silthus.mcgamelib.events.player.UserEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;

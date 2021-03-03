@@ -1,9 +1,6 @@
 package net.silthus.mcgamelib;
 
-import org.bukkit.configuration.ConfigurationSection;
-
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 
 /**

@@ -3,7 +3,6 @@ package net.silthus.mcgamelib.event;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
-import net.silthus.mcgamelib.Game;
 import net.silthus.mcgamelib.GameSession;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
