@@ -26,6 +26,14 @@ public interface Game {
     GameManager gameManager();
 
     /**
+     * Every game mode is configured with a game config and creates its unique game from that.
+     * <p>Use the game config to get the config data of the game, phase or features.
+     *
+     * @return the config of this game
+     */
+    GameConfig config();
+
+    /**
      * Gets all active sessions of this game instance.
      * <p>Use the {@link #allSessions()} method to get all sessions
      * including sessions that already ended.
@@ -48,12 +56,4 @@ public interface Game {
      * @return the game session created for this game
      */
     GameSession start();
-
-    /**
-     * Gets the relevant configuration section of the feature inside the game config.
-     *
-     * @param identifier the identifier of the feature
-     * @return the config section of the feature
-     */
-    Optional<ConfigurationSection> getFeatureConfig(String identifier);
 }

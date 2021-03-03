@@ -2,15 +2,26 @@ package net.silthus.mcgamelib;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.silthus.mcgamelib.event.EventHandler;
 
 @Getter
 @Accessors(fluent = true)
 public final class GameManager {
 
     private final MCGameLib plugin;
-    private final FeatureRegistry features = new FeatureRegistry();
+    private FeatureRegistry features;
+    private EventHandler eventHandler;
+    private UserHandler userHandler;
 
     GameManager(MCGameLib plugin) {
         this.plugin = plugin;
+    }
+
+    public void load() {
+
+        features = new FeatureRegistry();
+
+        userHandler = new UserHandler();
+        eventHandler = new EventHandler(plugin, userHandler);
     }
 }

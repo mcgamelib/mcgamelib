@@ -1,15 +1,19 @@
 package net.silthus.mcgamelib;
 
+import net.silthus.configmapper.ConfigurationException;
 import net.silthus.mcgamelib.features.MaxHealthFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.net.ConnectException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
-class FeatureRegistryTest {
+@SuppressWarnings("ALL")
+class FeatureRegistryTest extends TestBase {
 
     private FeatureRegistry registry;
 
@@ -28,7 +32,7 @@ class FeatureRegistryTest {
         assertThat(registry.get(MaxHealthFeature.class))
                 .isPresent()
                 .get()
-                .extracting(factory -> factory.create(mock(GameSession.class)))
+                .extracting(factory -> factory.create(mockGameSession()))
                 .extracting(MaxHealthFeature::maxHealth)
                 .isEqualTo(20d);
     }
@@ -42,7 +46,7 @@ class FeatureRegistryTest {
         assertThat(registry.get(MaxHealthFeature.class))
                 .isPresent()
                 .get()
-                .extracting(factory -> factory.create(mock(GameSession.class)))
+                .extracting(factory -> factory.create(mockGameSession()))
                 .extracting(MaxHealthFeature::maxHealth)
                 .isEqualTo(30d);
     }
@@ -69,13 +73,14 @@ class FeatureRegistryTest {
     }
 
     @Test
-    @DisplayName("should throw an exception when creating an invalid feature")
+    @DisplayName("should remove an invalid feature registration")
     void shouldThrowExceptionOnRegistrationIfClassIsInvalid() {
 
         registry.register(InvalidFeature.class);
 
-        assertThatExceptionOfType(Exception.class)
-                .isThrownBy(() -> registry.get(InvalidFeature.class));
+        assertThatExceptionOfType(ConfigurationException.class)
+                .isThrownBy(() -> registry.get(InvalidFeature.class).get().create(mockGameSession()));
+
         assertThat(registry.allTypes()).isEmpty();
     }
 

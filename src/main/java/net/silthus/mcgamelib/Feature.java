@@ -10,6 +10,11 @@ import net.silthus.mcgamelib.annotations.FeatureInfo;
 public interface Feature extends GameObject {
 
     /**
+     * @return the name of the phase used in config paths and for reference
+     */
+    String name();
+
+    /**
      * The load method is called after the config options have been
      * injected into the feature and before {@link #enable()} is called.
      * <p>Use it to load data and prepare your feature.

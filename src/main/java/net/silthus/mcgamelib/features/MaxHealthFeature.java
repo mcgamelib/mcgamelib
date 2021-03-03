@@ -1,11 +1,11 @@
 package net.silthus.mcgamelib.features;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.Accessors;
 import net.silthus.configmapper.ConfigOption;
 import net.silthus.mcgamelib.AbstractFeature;
 import net.silthus.mcgamelib.GameSession;
+import net.silthus.mcgamelib.annotations.FeatureInfo;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -14,9 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Accessors(fluent = true)
 @EqualsAndHashCode(callSuper = true)
+@FeatureInfo(
+        value = "max-health",
+        description = "Changes the max health of all players in the game to the given value."
+)
 public class MaxHealthFeature extends AbstractFeature {
 
     @ConfigOption(

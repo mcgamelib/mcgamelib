@@ -1,10 +1,7 @@
 package net.silthus.mcgamelib.event;
 
 import lombok.NonNull;
-import net.silthus.mcgamelib.Game;
-import net.silthus.mcgamelib.MCGameLib;
-import net.silthus.mcgamelib.User;
-import net.silthus.mcgamelib.UserHandler;
+import net.silthus.mcgamelib.*;
 import net.silthus.mcgamelib.events.player.UserEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -43,7 +40,7 @@ public class EventHandler implements Listener {
         this.userHandler = userHandler;
     }
 
-    public void registerEvents(@NonNull Listener listener, @NonNull Game game) {
+    public void registerEvents(@NonNull Listener listener, @NonNull GameSession session) {
 
         Set<RegisteredListener> newEvents = new HashSet<>();
         Arrays.stream(listener.getClass().getMethods()).filter((method -> method.isAnnotationPresent(GameEvent.class))).forEach(
@@ -58,13 +55,13 @@ public class EventHandler implements Listener {
                         Class<Event> eventClass = (Class<Event>) method.getParameterTypes()[0];
 
                         RegisteredListener registeredListener = new RegisteredListener(listener,
-                                game,
+                                session,
                                 eventClass,
                                 method,
                                 method.getAnnotation(GameEvent.class)
                         );
 
-                        activeListeners.computeIfAbsent(game.id(), (key) -> new CopyOnWriteArrayList<>()).add(registeredListener);
+                        activeListeners.computeIfAbsent(session.id(), (key) -> new CopyOnWriteArrayList<>()).add(registeredListener);
 
                         activeEvents.computeIfAbsent(eventClass, (key) -> {
                             newEvents.add(registeredListener);
@@ -90,7 +87,15 @@ public class EventHandler implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
     }
 
-    public void unregister(@NonNull Listener listener, @NonNull Game game) {
+    public void unregisterAll(@NonNull GameSession session) {
+
+        List<RegisteredListener> listeners = activeListeners.remove(session.id());
+        if (listeners != null) {
+            listeners.forEach(listener -> unregister(listener.listener(), session));
+        }
+    }
+
+    public void unregister(@NonNull Listener listener, @NonNull GameSession session) {
         //noinspection unchecked
         Arrays.stream(listener.getClass().getMethods())
                 .filter((method -> method.isAnnotationPresent(GameEvent.class)))
@@ -98,10 +103,10 @@ public class EventHandler implements Listener {
                 .map(method -> (Class<Event>) method.getParameterTypes()[0]).forEach(
                 eventClass -> activeEvents.get(eventClass).removeIf(registeredListener -> registeredListener.listener().equals(listener)));
 
-        if (activeListeners.containsKey(game.id())) {
-            activeListeners.get(game.id()).removeIf(registeredListener -> registeredListener.listener().equals(listener));
-            if (activeListeners.get(game.id()).size() == 0) {
-                activeListeners.remove(game.id());
+        if (activeListeners.containsKey(session.id())) {
+            activeListeners.get(session.id()).removeIf(registeredListener -> registeredListener.listener().equals(listener));
+            if (activeListeners.get(session.id()).isEmpty()) {
+                activeListeners.remove(session.id());
             }
         }
 
