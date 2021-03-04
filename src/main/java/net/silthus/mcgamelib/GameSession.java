@@ -70,7 +70,7 @@ public interface GameSession {
      * @return true if the user was in the game.
      *         false if the user was neither spectating nor playing the game.
      */
-    boolean leave(User user);
+    boolean quit(User user);
 
     /**
      * Gets a list of active users in this game session.
@@ -220,7 +220,11 @@ public interface GameSession {
         /**
          * The game session is loading and the game cannot be joined at this moment.
          */
-        LOADING;
+        LOADING,
+        /**
+         * The join event was cancelled by another plugin.
+         */
+        CANCELLED;
 
         /**
          * @return true if the join was successful
