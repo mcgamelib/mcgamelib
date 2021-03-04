@@ -31,6 +31,15 @@ public interface Game {
     GameConfig config();
 
     /**
+     * A game can only be created from a definition that defines the various phases and settings.
+     * <p>The game takes this {@link GameDefinition} and customizes it using the {@link GameConfig}.
+     * The result is a {@link Game} that can be played multiple times by creating individual {@link GameSession}s.
+     *
+     * @return the game definition this game is based off
+     */
+    GameDefinition definition();
+
+    /**
      * Gets all active sessions of this game instance.
      * <p>Use the {@link #allSessions()} method to get all sessions
      * including sessions that already ended.
@@ -45,12 +54,12 @@ public interface Game {
     Collection<GameSession> allSessions();
 
     /**
-     * Starts a new {@link GameSession} for this game.
-     * <p>Starting a game will load the map and enable the first {@link Phase}.
-     * <p>A game can be started as often as needed but care should be taken to fill existing
-     * {@link #sessions()} before starting another game.
+     * Creates a new game session for this configured game.
+     * <p>Use the {@link GameSession#start()}
+     * <p>A game can be created as often as needed but care should be taken to fill existing
+     * {@link #sessions()} before creating another game.
      *
      * @return the game session created for this game
      */
-    GameSession startNewGameSession();
+    GameSession createSession();
 }

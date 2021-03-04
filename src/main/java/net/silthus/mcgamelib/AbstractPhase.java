@@ -33,7 +33,7 @@ public abstract class AbstractPhase extends AbstractGameObject implements Phase 
             "The time format must start with a P and then be followed by a duration of D H M S.",
             "For example: P5d4h3m2s.001 is parsed as a duration of 5 days 4 hours 3 minutes 2.001 seconds"
     })
-    private final String duration = null;
+    private String duration = null;
     private Duration configuredDuration = Duration.ZERO;
     private Instant startTime;
     private Instant endTime;
@@ -60,14 +60,8 @@ public abstract class AbstractPhase extends AbstractGameObject implements Phase 
         return Duration.between(startTime, endTime);
     }
 
-    /**
-     * Sets the default duration of this phase.
-     * <p>The duration can always be overwritten by the config.
-     *
-     * @param duration the default duration to set for this phase
-     * @return this phase
-     */
-    protected AbstractPhase duration(Duration duration) {
+    @Override
+    public Phase duration(Duration duration) {
 
         this.configuredDuration = duration;
         return this;
@@ -91,27 +85,14 @@ public abstract class AbstractPhase extends AbstractGameObject implements Phase 
         return Optional.ofNullable(feature(featureClass));
     }
 
-    /**
-         * Adds the given feature to this phase without an explicit configuration.
-         *
-         * @param feature the class of the feature that is added to this phase
-         * @param <TFeature> the type of the feature
-         * @return this phase instance
-         */
-    protected final <TFeature extends Feature> Phase addFeature(Class<TFeature> feature) {
+    @Override
+    public final <TFeature extends Feature> Phase addFeature(Class<TFeature> feature) {
 
         return addFeature(feature, tFeature -> {});
     }
 
-    /**
-         * Adds the given feature to this phase with a custom configuration.
-         *
-         * @param feature the class of the feature that is added to this phase
-         * @param <TFeature> the type of the feature
-         * @param config the configuration callback to configure the feature
-         * @return this phase instance
-         */
-    protected final <TFeature extends Feature> Phase addFeature(Class<TFeature> feature, Consumer<TFeature> config) {
+    @Override
+    public final <TFeature extends Feature> Phase addFeature(Class<TFeature> feature, Consumer<TFeature> config) {
 
         gameManager().features().get(feature)
                 .ifPresent(factory -> {

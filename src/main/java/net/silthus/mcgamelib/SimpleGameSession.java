@@ -2,6 +2,8 @@ package net.silthus.mcgamelib;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import lombok.extern.java.Log;
+import net.silthus.configmapper.ConfigurationException;
 import net.silthus.mcgamelib.events.player.JoinGameEvent;
 import net.silthus.mcgamelib.events.player.QuitGameEvent;
 import net.silthus.mcgamelib.events.player.SpectateGameEvent;
@@ -13,8 +15,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Data
+@Log(topic = "MCGameLib")
 @Accessors(fluent = true)
-public class SimpleGameSession implements GameSession {
+class SimpleGameSession implements GameSession {
 
     private final UUID id = UUID.randomUUID();
     private final Game game;
@@ -23,8 +26,50 @@ public class SimpleGameSession implements GameSession {
     private final Set<User> users = new HashSet<>();
     private final Set<User> spectators = new HashSet<>();
 
+    private final List<Phase> phases = new ArrayList<>();
+
     private final Map<GameListenerType, Map<UUID, Set<Consumer<User>>>> userListeners = new HashMap<>();
     private final Map<GameListenerType, Map<UUID, Set<Consumer<Player>>>> playerListeners = new HashMap<>();
+
+    private boolean initialized = false;
+
+    public Collection<Phase> phases() {
+
+        return List.copyOf(phases);
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public GameSession initialize() {
+
+        if (initialized()) return this;
+
+        for (Map.Entry<Class<? extends Phase>, Consumer<? extends Phase>> entry : game().definition().phases()) {
+            phases.add(createPhase((Class) entry.getKey(), entry.getValue()));
+        }
+
+        initialized(true);
+
+        return this;
+    }
+
+    @Override
+    public GameSession start() {
+        // TODO: implement
+        return this;
+    }
+
+    @Override
+    public GameSession abort() {
+        // TODO: implement
+        return this;
+    }
+
+    @Override
+    public GameSession end() {
+        // TODO: implement
+        return this;
+    }
 
     @Override
     public JoinResult join(User user) {
@@ -140,6 +185,15 @@ public class SimpleGameSession implements GameSession {
         playerListeners.computeIfAbsent(type, t -> new HashMap<>())
                 .computeIfAbsent(gameObject.id(), uuid -> new HashSet<>())
                 .add(consumer);
+    }
+
+    private <TPhase extends Phase> TPhase createPhase(Class<TPhase> phaseClass, Consumer<TPhase> consumer) throws ConfigurationException {
+
+        return game().gameManager().phases().get(phaseClass).map(phaseFactory -> {
+            TPhase phase = phaseFactory.create(this);
+            consumer.accept(phase);
+            return phase;
+        }).orElseThrow(() -> new ConfigurationException("failed to find a valid phase registration for " + phaseClass.getCanonicalName()));
     }
 
 

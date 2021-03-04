@@ -11,10 +11,11 @@ import java.util.stream.Collectors;
 
 @Data
 @Accessors(fluent = true)
-public class SimpleGame implements Game {
+class SimpleGame implements Game {
 
     private final UUID id = UUID.randomUUID();
     private final GameManager gameManager;
+    private final GameDefinition definition;
     private final GameConfig config;
 
     private final Set<GameSession> sessions = new HashSet<>();
@@ -34,7 +35,8 @@ public class SimpleGame implements Game {
     }
 
     @Override
-    public GameSession startNewGameSession() {
-        return null;
+    public GameSession createSession() {
+
+        return new SimpleGameSession(this);
     }
 }

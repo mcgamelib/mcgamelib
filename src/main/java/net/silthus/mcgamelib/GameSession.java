@@ -34,6 +34,11 @@ public interface GameSession {
     GameState state();
 
     /**
+     * @return true if the game session has been initialized and can be started
+     */
+    boolean initialized();
+
+    /**
      * @return true if the game session is running
      */
     default boolean active() {
@@ -46,6 +51,24 @@ public interface GameSession {
     default boolean ended() {
         return state() == GameState.ENDED;
     }
+
+    /**
+     * @return an immutable list of phases that are created for this game session
+     */
+    Collection<Phase> phases();
+
+    /**
+     * Initializes the game session creating new instances for all configured phases.
+     *
+     * @return the initialized game session
+     */
+    GameSession initialize();
+
+    GameSession start();
+
+    GameSession abort();
+
+    GameSession end();
 
     /**
      * Requests the given user to join this game session.

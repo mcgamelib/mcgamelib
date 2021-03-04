@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public interface Phase extends GameObject {
 
@@ -22,6 +23,21 @@ public interface Phase extends GameObject {
      * @return the duration of the phase
      */
     Duration duration();
+
+    /**
+     * Sets the default duration of this phase.
+     * <p>The duration can always be overwritten by the config.
+     * <p>This does not affect the time that has already passed and only
+     * represents the duration this phase should have.
+     * <p>Set it to {@link Duration#ZERO} to disable the automatic ending.
+     * <p>Updating the duration when a phase is {@link #active()} may result
+     * in an immediate ending of the phase if the new duration is short
+     * than the passed {@link #duration()}.
+     *
+     * @param duration the default duration to set for this phase
+     * @return this phase
+     */
+    Phase duration(Duration duration);
 
     /**
      * The duration of the phase determines the time period
@@ -106,6 +122,25 @@ public interface Phase extends GameObject {
      * @return the feature or an empty optional if it does not exist
      */
     <TFeature extends Feature> Optional<TFeature> optionalFeature(Class<TFeature> featureClass);
+
+    /**
+         * Adds the given feature to this phase without an explicit configuration.
+         *
+         * @param feature the class of the feature that is added to this phase
+         * @param <TFeature> the type of the feature
+         * @return this phase instance
+         */
+    <TFeature extends Feature> Phase addFeature(Class<TFeature> feature);
+
+    /**
+         * Adds the given feature to this phase with a custom configuration.
+         *
+         * @param feature the class of the feature that is added to this phase
+         * @param <TFeature> the type of the feature
+         * @param config the configuration callback to configure the feature
+         * @return this phase instance
+         */
+    <TFeature extends Feature> Phase addFeature(Class<TFeature> feature, Consumer<TFeature> config);
 
     /**
      * Initializes the phase adding all built-in features and loading config values.
