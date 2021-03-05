@@ -35,7 +35,7 @@ public abstract class AbstractPhase extends AbstractGameObject implements Phase 
             "The time format must start with a PT and then be followed by a duration of D H M S.",
             "For example: PT5d4h3m2s.001 is parsed as a duration of 5 days 4 hours 3 minutes 2.001 seconds"
     })
-    private final String duration = null;
+    private String duration = null;
     private Duration configuredDuration = Duration.ZERO;
     private Instant startTime;
     private Instant endTime;
