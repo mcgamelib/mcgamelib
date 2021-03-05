@@ -31,6 +31,7 @@ public final class FeatureRegistry {
      * @param <TFeature> the type of the feature
      * @return this feature registry
      * @throws UnsupportedOperationException if the feature class is already registered
+     * @throws InitializationException inside the supplier function if the creation of the feature fails
      */
     public <TFeature extends Feature> FeatureRegistry register(Class<TFeature> featureClass) {
 
@@ -40,11 +41,8 @@ public final class FeatureRegistry {
                 constructor.setAccessible(true);
                 return constructor.newInstance(phase);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                log.severe("failed to create instance of feature: " + featureClass.getCanonicalName());
-                log.severe("removing it from the registry...");
-                e.printStackTrace();
                 features.remove(featureClass);
-                return null;
+                throw new InitializationException("failed to create instance of feature: " + featureClass.getCanonicalName(), e);
             }
         });
     }

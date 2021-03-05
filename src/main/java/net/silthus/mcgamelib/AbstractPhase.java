@@ -14,7 +14,10 @@ import org.bukkit.event.Listener;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @Getter
@@ -24,19 +27,19 @@ import java.util.function.Consumer;
 @Log(topic = "MCGameLib")
 public abstract class AbstractPhase extends AbstractGameObject implements Phase {
 
-    private final UUID id = UUID.randomUUID();
     private final PhaseInfo info;
     private final HashMap<Class<?>, Feature> features = new HashMap<>();
 
     @ConfigOption(description = {
             "The duration of the phase in ISO-8601 format.",
-            "The time format must start with a P and then be followed by a duration of D H M S.",
-            "For example: P5d4h3m2s.001 is parsed as a duration of 5 days 4 hours 3 minutes 2.001 seconds"
+            "The time format must start with a PT and then be followed by a duration of D H M S.",
+            "For example: PT5d4h3m2s.001 is parsed as a duration of 5 days 4 hours 3 minutes 2.001 seconds"
     })
-    private String duration = null;
+    private final String duration = null;
     private Duration configuredDuration = Duration.ZERO;
     private Instant startTime;
     private Instant endTime;
+    private boolean initialized = false;
 
     public AbstractPhase(GameSession session) {
         super(session);
@@ -111,22 +114,35 @@ public abstract class AbstractPhase extends AbstractGameObject implements Phase 
     }
 
     @Override
-    public final void init() {
+    public final void initialize() throws InitializationException {
 
-        configure();
+        if (initialized()) return;
+
+        try {
+            configure();
+        } catch (Exception e) {
+            throw new InitializationException("an error occurred when trying to configure phase: " + e.getMessage(), e);
+        }
 
         if (!Strings.isNullOrEmpty(duration)) {
-            Duration duration = Duration.parse(this.duration);
-            if (!duration().isZero() && !duration.isNegative()) {
-                configuredDuration = duration;
+            try {
+                Duration duration = Duration.parse(this.duration);
+                if (!duration.isZero() && !duration.isNegative()) {
+                    configuredDuration = duration;
+                }
+            } catch (Exception e) {
+                throw new InitializationException("failed to parse duration \"" + this.duration + "\": " + e.getMessage(), e);
             }
         }
+
+        this.initialized = true;
     }
 
     /**
      * Configures the phase adding all built-in features and loading config values.
      * <p>The init method is always called before the start of the phase.
      * <p>Overwrite it to add the features of this phase, configure the duration and so on.
+     * <p>You can safely throw any exception to indicate a failed configured.
      */
     protected abstract void configure();
 

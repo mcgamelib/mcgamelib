@@ -3,7 +3,6 @@ package net.silthus.mcgamelib;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.silthus.configmapper.ConfigMap;
-import net.silthus.configmapper.ConfigurationException;
 import net.silthus.configmapper.bukkit.BukkitConfigMap;
 import net.silthus.mcgamelib.annotations.FeatureInfo;
 import org.jetbrains.annotations.Nullable;
@@ -36,10 +35,10 @@ public final class FeatureFactory<TFeature extends Feature> {
      *
      * @param session the game session that creates the feature
      * @return the feature that was created
-     * @throws ConfigurationException if the creation of the config map for the given feature fails.
+     * @throws InitializationException if the creation of the config map for the given feature fails.
      *                                this could be the case if the feature is missing required configuration parameters.
      */
-    public TFeature create(GameSession session) throws ConfigurationException {
+    public TFeature create(GameSession session) throws InitializationException {
 
         return create(null, session, session.id(), gameSessionConfigMaps);
     }
@@ -49,32 +48,39 @@ public final class FeatureFactory<TFeature extends Feature> {
      *
      * @param phase the phase that is requesting the creation of this feature
      * @return the created feature with all configs applied to it
-     * @throws ConfigurationException if the creation of the config map for the given feature fails.
+     * @throws InitializationException if the creation of the config map for the given feature fails.
      *                                this could be the case if the feature is missing required configuration parameters.
      */
-    public TFeature create(Phase phase) throws ConfigurationException {
+    public TFeature create(Phase phase) throws InitializationException {
 
         return create(phase, phase.session(), phase.id(), phaseConfigMaps);
     }
 
     private TFeature create(@Nullable Phase phase, @NonNull GameSession session, @NonNull UUID id, @NonNull Map<UUID, ConfigMap> cache) {
 
-        final TFeature feature = supplier.apply(session);
+        final TFeature feature;
+        try {
+            feature = supplier.apply(session);
+        } catch (Exception e) {
+            throw new InitializationException("failed to create instance of feature " + featureClass.getCanonicalName());
+        }
 
-        if (feature == null)
-            throw new ConfigurationException("failed to create instance of feature " + featureClass.getCanonicalName());
+        try {
+            cache.computeIfAbsent(id,
+                    uuid -> BukkitConfigMap.of(feature).with(
+                            session.game().config().getFeatureConfig(phase, feature)
+                    )
+            ).applyTo(feature);
+        } catch (Exception e) {
+            throw new InitializationException("failed to create config map of feature " + featureClass.getCanonicalName() + " (" + featureInfo.value() + "): " + e.getMessage(), e);
+        }
 
-        return cache.computeIfAbsent(id,
-                uuid -> {
-                    try {
-                        return BukkitConfigMap.of(feature).with(
-                                session.game().config().getFeatureConfig(phase, feature)
-                        );
-                    } catch (ConfigurationException e) {
-                        log.severe("failed to create config map of feature " + featureClass.getCanonicalName() + " (" + featureInfo.value() + "): " + e.getMessage());
-                        throw e;
-                    }
-                }
-        ).applyTo(feature);
+        try {
+            feature.load();
+        } catch (Exception e) {
+            throw new InitializationException("an error occurred when loading feature " + feature.getClass().getCanonicalName() + ": " + e.getMessage(), e);
+        }
+
+        return feature;
     }
 }

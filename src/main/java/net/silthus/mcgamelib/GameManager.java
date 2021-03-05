@@ -10,22 +10,20 @@ public final class GameManager {
 
     private final MCGameLib plugin;
 
-    private FeatureRegistry features;
-    private PhaseRegistry phases;
+    private final FeatureRegistry features = new FeatureRegistry();
+    private final PhaseRegistry phases = new PhaseRegistry();
 
-    private EventHandler eventHandler;
-    private UserHandler userHandler;
+    private final EventHandler eventHandler;
+    private final UserHandler userHandler;
 
     GameManager(MCGameLib plugin) {
+
         this.plugin = plugin;
-    }
-
-    public void load() {
-
-        features = new FeatureRegistry();
-        phases = new PhaseRegistry();
-
         userHandler = new UserHandler();
         eventHandler = new EventHandler(plugin, userHandler);
+    }
+
+    public void initialize() {
+
     }
 }

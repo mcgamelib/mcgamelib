@@ -1,39 +1,54 @@
 package net.silthus.mcgamelib;
 
-import net.silthus.mcgamelib.features.MaxHealthFeature;
 import net.silthus.mcgamelib.modes.TestPhase;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.Mockito.mock;
 
 class SimpleGameSessionTest extends TestBase {
 
+    @Override
+    @BeforeEach
+    void setUp() {
+        super.setUp();
+        gameManager().phases().register(TestPhase.class);
+    }
+
     @Test
-    @DisplayName("should create an instance of the configured phase")
+    @DisplayName("should create and initialize the game session")
+    void shouldCreateAndInitializeTheGameSession() {
+
+        GameSession session = game().createSession();
+
+        assertThat(session.initialized()).isTrue();
+    }
+
+    @Test
+    @DisplayName("should create and initialize the phases")
     void shouldCreateInstancesOfPhases() {
 
-        GameManager gameManager = new GameManager(mock(MCGameLib.class));
-        gameManager.load();
-
-        gameManager.phases().register(TestPhase.class);
-        gameManager.features().register(MaxHealthFeature.class);
-
-        GameSession session = new SimpleGame(gameManager,
+        GameSession session = new SimpleGame(gameManager(),
                 GameDefinition.builder().name("test")
-                        .phase(TestPhase.class)
+                        .addPhase(TestPhase.class)
                         .build(),
                 new GameConfig()
         ).createSession();
 
-
-        assertThatCode(session::initialize)
-                .doesNotThrowAnyException();
-
         assertThat(session.phases())
                 .hasSize(1)
-                .hasOnlyElementsOfTypes(TestPhase.class);
+                .hasOnlyElementsOfTypes(TestPhase.class)
+                .allMatch(Phase::initialized);
+    }
+
+    @Test
+    @DisplayName("should cache new game sessions in the game session list")
+    void shouldStoreTheNewGameSessionInTheGameList() {
+
+        Game game = game();
+        GameSession session = game.createSession();
+
+        assertThat(game.allSessions()).contains(session);
     }
 }

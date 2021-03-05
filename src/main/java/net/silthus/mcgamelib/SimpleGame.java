@@ -1,6 +1,7 @@
 package net.silthus.mcgamelib;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.util.Collection;
@@ -11,14 +12,26 @@ import java.util.stream.Collectors;
 
 @Data
 @Accessors(fluent = true)
+@EqualsAndHashCode(of = "id")
 class SimpleGame implements Game {
 
-    private final UUID id = UUID.randomUUID();
+    private final UUID id;
     private final GameManager gameManager;
     private final GameDefinition definition;
     private final GameConfig config;
 
     private final Set<GameSession> sessions = new HashSet<>();
+
+    SimpleGame(UUID id, GameManager gameManager, GameDefinition definition, GameConfig config) {
+        this.id = id;
+        this.gameManager = gameManager;
+        this.definition = definition;
+        this.config = config;
+    }
+
+    SimpleGame(GameManager gameManager, GameDefinition definition, GameConfig config) {
+        this(UUID.randomUUID(), gameManager, definition, config);
+    }
 
     @Override
     public final Collection<GameSession> sessions() {
@@ -37,6 +50,9 @@ class SimpleGame implements Game {
     @Override
     public GameSession createSession() {
 
-        return new SimpleGameSession(this);
+        GameSession session = new SimpleGameSession(this).initialize();
+        sessions.add(session);
+
+        return session;
     }
 }

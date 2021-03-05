@@ -31,6 +31,7 @@ public final class PhaseRegistry {
      * @param <TPhase> the type of the phase
      * @return this phase registry
      * @throws UnsupportedOperationException if phase feature class is already registered
+     * @throws InitializationException inside the supplier function if the creation of the phase fails
      */
     public <TPhase extends Phase> PhaseRegistry register(Class<TPhase> phaseClass) {
 
@@ -40,11 +41,8 @@ public final class PhaseRegistry {
                 constructor.setAccessible(true);
                 return constructor.newInstance(phase);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                log.severe("failed to create instance of phase: " + phaseClass.getCanonicalName());
-                log.severe("removing it from the registry...");
-                e.printStackTrace();
                 phases.remove(phaseClass);
-                return null;
+                throw new InitializationException("failed to create instance of phase: " + phaseClass.getCanonicalName(), e);
             }
         });
     }

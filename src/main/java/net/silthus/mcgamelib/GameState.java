@@ -6,6 +6,7 @@ package net.silthus.mcgamelib;
  */
 public enum GameState {
 
+    NOT_INITIALIZED,
     NOT_STARTED,
     LOADING,
     ACTIVE,

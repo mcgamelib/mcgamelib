@@ -54,12 +54,15 @@ public interface Game {
     Collection<GameSession> allSessions();
 
     /**
-     * Creates a new game session for this configured game.
-     * <p>Use the {@link GameSession#start()}
+     * Creates a new game session for this game and initializes it.
+     * <p>Use {@link GameSession#start()} to start the first phase of the game.
      * <p>A game can be created as often as needed but care should be taken to fill existing
      * {@link #sessions()} before creating another game.
      *
      * @return the game session created for this game
+     * @throws InitializationException if the game session fails to initialize.
+     *         this may happen if a phase or feature has missing config values
+     *         or if an error occurred when initializing the game.
      */
-    GameSession createSession();
+    GameSession createSession() throws InitializationException;
 }

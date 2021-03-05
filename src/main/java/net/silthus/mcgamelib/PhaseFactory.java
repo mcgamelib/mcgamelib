@@ -2,7 +2,6 @@ package net.silthus.mcgamelib;
 
 import lombok.extern.java.Log;
 import net.silthus.configmapper.ConfigMap;
-import net.silthus.configmapper.ConfigurationException;
 import net.silthus.configmapper.bukkit.BukkitConfigMap;
 import net.silthus.mcgamelib.annotations.PhaseInfo;
 
@@ -27,33 +26,54 @@ public final class PhaseFactory<TPhase extends Phase> {
     }
 
     /**
-     * Creates a new phase in the scope of the game session.
+     * Creates a new phase and initializes it in the scope of the game session.
      * <p>This will also scan the phase for all config properties and injects
      * the provided config section from the {@link GameConfig}.
      *
      * @param session the game session that creates the phase
      * @return the phase that was created
-     * @throws ConfigurationException if the creation of the config map for the given feature fails.
+     * @throws InitializationException if the creation of the config map for the given feature fails.
      *                                this could be the case if the feature is missing required configuration parameters.
      */
-    public TPhase create(GameSession session) throws ConfigurationException {
+    public TPhase create(GameSession session) throws InitializationException {
 
-        final TPhase phase = supplier.apply(session);
+        return create(session, true);
+    }
 
-        if (phase == null)
-            throw new ConfigurationException("failed to create instance of phase " + phaseClass.getCanonicalName());
+    /**
+     * Creates a new phase in the scope of the game session.
+     * <p>This will also scan the phase for all config properties and injects
+     * the provided config section from the {@link GameConfig}.
+     *
+     * @param session the game session that creates the phase
+     * @param init set to true to initialize the phase
+     * @return the phase that was created
+     * @throws InitializationException if the creation of the config map for the given feature fails.
+     *                                this could be the case if the feature is missing required configuration parameters.
+     */
+    public TPhase create(GameSession session, boolean init) throws InitializationException {
 
-        return gameSessionConfigMaps.computeIfAbsent(session.id(),
-                uuid -> {
-                    try {
-                        return BukkitConfigMap.of(phase).with(
-                                session.game().config().getPhaseConfig(phase)
-                        );
-                    } catch (ConfigurationException e) {
-                        log.severe("failed to create config map of phase " + phaseClass.getCanonicalName() + " (" + phaseInfo.value() + "): " + e.getMessage());
-                        throw e;
-                    }
-                }
-        ).applyTo(phase);
+        final TPhase phase;
+        try {
+            phase = supplier.apply(session);
+
+            gameSessionConfigMaps.computeIfAbsent(session.id(),
+                    uuid -> BukkitConfigMap.of(phase).with(
+                            session.game().config().getPhaseConfig(phase)
+                    )
+            ).applyTo(phase);
+        } catch (Exception e) {
+            throw new InitializationException("failed to create instance of phase " + phaseClass.getCanonicalName(), e);
+        }
+
+        if (init) {
+            try {
+                phase.initialize();
+            } catch (Exception e) {
+                throw new InitializationException("failed to initialize phase " + phase.getClass().getCanonicalName(), e);
+            }
+        }
+
+        return phase;
     }
 }

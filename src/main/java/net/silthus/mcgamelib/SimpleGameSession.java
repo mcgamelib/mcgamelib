@@ -1,9 +1,9 @@
 package net.silthus.mcgamelib;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
-import net.silthus.configmapper.ConfigurationException;
 import net.silthus.mcgamelib.events.player.JoinGameEvent;
 import net.silthus.mcgamelib.events.player.QuitGameEvent;
 import net.silthus.mcgamelib.events.player.SpectateGameEvent;
@@ -17,11 +17,12 @@ import java.util.stream.Collectors;
 @Data
 @Log(topic = "MCGameLib")
 @Accessors(fluent = true)
+@EqualsAndHashCode(of = "id")
 class SimpleGameSession implements GameSession {
 
     private final UUID id = UUID.randomUUID();
     private final Game game;
-    private GameState state;
+    private GameState state = GameState.NOT_INITIALIZED;
 
     private final Set<User> users = new HashSet<>();
     private final Set<User> spectators = new HashSet<>();
@@ -49,6 +50,7 @@ class SimpleGameSession implements GameSession {
         }
 
         initialized(true);
+        state(GameState.NOT_STARTED);
 
         return this;
     }
@@ -187,15 +189,15 @@ class SimpleGameSession implements GameSession {
                 .add(consumer);
     }
 
-    private <TPhase extends Phase> TPhase createPhase(Class<TPhase> phaseClass, Consumer<TPhase> consumer) throws ConfigurationException {
+    private <TPhase extends Phase> TPhase createPhase(Class<TPhase> phaseClass, Consumer<TPhase> consumer) throws InitializationException {
 
         return game().gameManager().phases().get(phaseClass).map(phaseFactory -> {
-            TPhase phase = phaseFactory.create(this);
+            TPhase phase = phaseFactory.create(this, false);
             consumer.accept(phase);
+            phase.initialize();
             return phase;
-        }).orElseThrow(() -> new ConfigurationException("failed to find a valid phase registration for " + phaseClass.getCanonicalName()));
+        }).orElseThrow(() -> new InitializationException("failed to find a valid phase registration for " + phaseClass.getCanonicalName()));
     }
-
 
     private enum GameListenerType {
         JOIN,

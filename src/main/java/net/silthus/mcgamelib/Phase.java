@@ -76,6 +76,11 @@ public interface Phase extends GameObject {
     @Nullable Instant endTime();
 
     /**
+     * @return true if the phase has been initialized and {@link #initialize()} was successfully called
+     */
+    boolean initialized();
+
+    /**
      * @return true if the phase started and is active.
      *         false if it has not started or ended.
      */
@@ -146,8 +151,10 @@ public interface Phase extends GameObject {
      * Initializes the phase adding all built-in features and loading config values.
      * <p>The init method is always called before the start of the phase.
      * <p>Use it after creating a new instance of the phase to load the configuration.
+     *
+     * @throws InitializationException if the phase cannot load all of its required values and configs
      */
-    void init();
+    void initialize() throws InitializationException;
 
     /**
      * Starts this phase and activates all features in it.

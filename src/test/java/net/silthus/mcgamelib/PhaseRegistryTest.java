@@ -1,6 +1,5 @@
 package net.silthus.mcgamelib;
 
-import net.silthus.configmapper.ConfigurationException;
 import net.silthus.mcgamelib.modes.TestPhase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +18,7 @@ class PhaseRegistryTest extends TestBase {
     @BeforeEach
     void setUp() {
 
+        super.setUp();
         registry = new PhaseRegistry();
     }
 
@@ -31,7 +31,7 @@ class PhaseRegistryTest extends TestBase {
         assertThat(registry.get(TestPhase.class))
                 .isPresent()
                 .get()
-                .extracting(factory -> factory.create(mockGameSession()))
+                .extracting(factory -> factory.create(gameSession()))
                 .isNotNull();
     }
 
@@ -44,7 +44,7 @@ class PhaseRegistryTest extends TestBase {
         assertThat(registry.get(TestPhase.class))
                 .isPresent()
                 .get()
-                .extracting(factory -> factory.create(mockGameSession()))
+                .extracting(factory -> factory.create(gameSession()))
                 .extracting(TestPhase::configuredDuration)
                 .isEqualTo(Duration.ofMinutes(1));
     }
@@ -76,8 +76,8 @@ class PhaseRegistryTest extends TestBase {
 
         registry.register(InvalidPhase.class);
 
-        assertThatExceptionOfType(ConfigurationException.class)
-                .isThrownBy(() -> registry.get(InvalidPhase.class).get().create(mockGameSession()));
+        assertThatExceptionOfType(InitializationException.class)
+                .isThrownBy(() -> registry.get(InvalidPhase.class).get().create(gameSession()));
 
         assertThat(registry.allTypes()).isEmpty();
     }

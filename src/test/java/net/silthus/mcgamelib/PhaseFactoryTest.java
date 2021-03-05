@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 class PhaseFactoryTest extends TestBase {
 
@@ -18,6 +17,7 @@ class PhaseFactoryTest extends TestBase {
     @BeforeEach
     void setUp() {
 
+        super.setUp();
         factory = new PhaseFactory<>(TestPhase.class, TestPhase::new);
     }
 
@@ -25,7 +25,7 @@ class PhaseFactoryTest extends TestBase {
     @DisplayName("should create phase with default values and name")
     void shouldCreateFeatureWithDefaultValues() {
 
-        assertThat(factory.create(mockGameSession()))
+        assertThat(factory.create(gameSession()))
                 .isNotNull()
                 .extracting(Phase::name)
                 .isEqualTo("test");
@@ -35,10 +35,9 @@ class PhaseFactoryTest extends TestBase {
     @DisplayName("should use values from game config")
     void shouldUseValuesFromConfig() {
 
-        GameSession session = mockGameSession();
         MemoryConfiguration config = new MemoryConfiguration();
-        config.set("phases.test.duration", "P10m");
-        when(session.game().config()).thenReturn(new GameConfig(config));
+        config.set("phases.test.duration", "PT10m");
+        GameSession session = gameSession(config);
 
         assertThat(factory.create(session))
                 .isNotNull()

@@ -1,6 +1,5 @@
 package net.silthus.mcgamelib;
 
-import net.silthus.configmapper.ConfigurationException;
 import net.silthus.mcgamelib.features.MaxHealthFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -75,7 +74,7 @@ class FeatureRegistryTest extends TestBase {
 
         registry.register(InvalidFeature.class);
 
-        assertThatExceptionOfType(ConfigurationException.class)
+        assertThatExceptionOfType(InitializationException.class)
                 .isThrownBy(() -> registry.get(InvalidFeature.class).get().create(mockGameSession()));
 
         assertThat(registry.allTypes()).isEmpty();

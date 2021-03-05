@@ -27,6 +27,6 @@ public class MCGameLib extends JavaPlugin implements Listener {
     public void onEnable() {
 
         this.gameManager = new GameManager(this);
-        gameManager.load();
+        gameManager.initialize();
     }
 }

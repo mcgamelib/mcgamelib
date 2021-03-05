@@ -1,6 +1,7 @@
 package net.silthus.mcgamelib;
 
 import lombok.Builder;
+import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
@@ -19,20 +20,22 @@ public class GameDefinition {
     String description = "N/A";
     @Builder.Default
     String author = "N/A";
+    @Singular(ignoreNullCollections = true)
     List<Map.Entry<Class<? extends Phase>, Consumer<? extends Phase>>> phases;
 
     public static class GameDefinitionBuilder {
 
-        public <TPhase extends Phase> GameDefinitionBuilder phase(Class<TPhase> phaseClass) {
+        public <TPhase extends Phase> GameDefinitionBuilder addPhase(Class<TPhase> phaseClass) {
 
-            return phase(phaseClass, phase -> {});
+            return addPhase(phaseClass, phase -> {});
         }
 
-        public <TPhase extends Phase> GameDefinitionBuilder phase(Class<TPhase> phaseClass, Consumer<TPhase> consumer) {
+        public <TPhase extends Phase> GameDefinitionBuilder addPhase(Class<TPhase> phaseClass, Consumer<TPhase> consumer) {
 
             if (phases == null) phases = new ArrayList<>();
 
             phases.add(Map.entry(phaseClass, consumer));
+
             return this;
         }
     }

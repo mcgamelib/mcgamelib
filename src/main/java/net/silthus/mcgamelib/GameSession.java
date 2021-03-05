@@ -61,6 +61,8 @@ public interface GameSession {
      * Initializes the game session creating new instances for all configured phases.
      *
      * @return the initialized game session
+     * @throws InitializationException if the game session fails to initialize.
+     *
      */
     GameSession initialize();
 
